@@ -7,6 +7,9 @@ import random
 import rlcompleter
 import readline
 
+
+hist_filename = os.path.join(os.getcwd(),".tb_hist")
+
 #	TODO :
 # hex editor [Done]
 # multibase (de)encoder 
@@ -14,6 +17,63 @@ import readline
 # adb scripter
 # multi-os scripter
 
+class Basecode:
+	"""Multi base [de|en]coding class
+	"""
+	
+	default_alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	
+	@staticmethod	
+	def _get_str(_in):
+		in_str = None
+		if type(_in)==str:
+			in_str = _in
+		elif type(_in)==list:
+			if len(_in)>0:
+				if all([type(d)==int for d in _in]):
+					in_str = "".join([chr(d) for d in _in])
+				elif all([type(d)==str for d in _in]):
+					in_str = "".join([str(d) for d in _in])
+			else:
+				in_str = ""
+		else:
+			raise Exception("input type not supported !")
+		return in_str
+	
+	@staticmethod	
+	def b64dec(_in):
+		return base64.b64decode(Basecode._get_str(_in))
+	
+	@staticmethod	
+	def b64enc(_in):
+		return base64.b64encode(Basecode._get_str(_in))
+	
+	@staticmethod	
+	def enc(_in,alphabet=default_alphabet):
+		in_str = Basecode._get_str(_in)
+		n = len(alphabet)
+		
+		divmod(,n)
+		
+		return base64.b64encode()
+	
+	def __init__(self, in_str):
+		self.in_str = in_str
+	
+	def toB64(self):
+		return Basecode.b64enc(self.in_str)
+	
+	def fromB64(self):
+		return Basecode.b64dec(self.in_str)
+	
+		
+class Cp:
+	"""Class used to compress bytestring
+	"""
+	def __init__(self, input_string):
+		self.input_string = input_string
+	
+	
 class Hxf:
 	"""Hexadecimal file editor class
 	"""
@@ -150,22 +210,23 @@ class Hxf:
 			
 		print ret
 	
-class Cp:
-	"""Class used to compress bytestring
-	"""
-	def __init__(self, input_string):
-		self.input_string = input_string
-		
 	
 def launch_interpreter():
 	"""Launch python interpreter with autocompletion
 	"""
+	try:
+		readline.read_history_file(hist_filename)	
+	except:
+		pass
 	readline.parse_and_bind('tab:complete')
+	
 	vars = globals().copy()
 	vars.update(locals())
 	shell = code.InteractiveConsole(vars)
 	shell.interact()
-
+	
+	readline.write_history_file(hist_filename)
+	
 def main():
 	launch_interpreter()
 
